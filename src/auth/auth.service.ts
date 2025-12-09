@@ -1,5 +1,6 @@
-import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { AuthCredentialsDto } from './dtos/auth-credentials.dto';
 import { User } from './user.entity';
@@ -15,9 +16,25 @@ export class AuthService {
     return this.createUser(authCredentialsDto);
   }
 
+  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<string> {
+    const { username, password } = authCredentialsDto;
+
+    const user = await this.userRepository.findOne({ where: { username } });
+
+    if (user && (await bcrypt.compare(password, user.password))) {
+      return user.username;
+    } else {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+  }
+
   async createUser(authCredentialsDto: AuthCredentialsDto): Promise<void> {
     const { username, password } = authCredentialsDto;
-    const user = this.userRepository.create({ username, password });
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = this.userRepository.create({ username, password: hashedPassword });
 
     try {
       await this.userRepository.save(user);
