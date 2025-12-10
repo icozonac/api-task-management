@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Module, ValidationPipe } from '@nestjs/common';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth.module';
-import { TasksModule } from './tasks/tasks.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { TasksModule } from './modules/tasks/tasks.module';
 
 @Module({
   imports: [
@@ -19,6 +20,20 @@ import { TasksModule } from './tasks/tasks.module';
     AuthModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useFactory: () =>
+        new ValidationPipe({
+          stopAtFirstError: false,
+          whitelist: true,
+          transform: true,
+        }),
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
+    },
+  ],
 })
 export class AppModule {}
