@@ -1847,7 +1847,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/passport-jwt@npm:^4":
+"@types/passport-jwt@npm:^4.0.1":
   version: 4.0.1
   resolution: "@types/passport-jwt@npm:4.0.1"
   dependencies:
@@ -2646,7 +2646,7 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^22.10.7"
     "@types/passport": "npm:^0"
-    "@types/passport-jwt": "npm:^4"
+    "@types/passport-jwt": "npm:^4.0.1"
     "@types/pg": "npm:^8"
     "@types/supertest": "npm:^6.0.2"
     bcrypt: "npm:^6.0.0"
