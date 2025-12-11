@@ -19,11 +19,11 @@ import { TasksModule } from './modules/tasks/tasks.module';
       useFactory: (configService: ConfigService) => {
         return {
           type: 'postgres',
-          host: configService.get<string>('DB_HOST'),
-          port: configService.get<number>('DB_PORT'),
-          username: configService.get<string>('DB_USERNAME'),
-          password: configService.get<string>('DB_PASSWORD'),
-          database: configService.get<string>('DB_DATABASE'),
+          host: configService.getOrThrow<string>('DB_HOST'),
+          port: configService.getOrThrow<number>('DB_PORT'),
+          username: configService.getOrThrow<string>('DB_USERNAME'),
+          password: configService.getOrThrow<string>('DB_PASSWORD'),
+          database: configService.getOrThrow<string>('DB_DATABASE'),
           autoLoadEntities: true,
           synchronize: true,
         };
