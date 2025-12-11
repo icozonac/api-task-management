@@ -15,7 +15,6 @@ import { TasksModule } from './modules/tasks/tasks.module';
     }),
     TasksModule,
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         return {
