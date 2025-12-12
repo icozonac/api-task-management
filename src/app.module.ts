@@ -17,6 +17,23 @@ import { TasksModule } from './modules/tasks/tasks.module';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
+        const dbUrl = configService.get<string>('DATABASE_URL');
+
+        if (dbUrl) {
+          return {
+            type: 'postgres',
+            url: dbUrl,
+            autoLoadEntities: true,
+            synchronize: true,
+            ssl: true,
+            extra: {
+              ssl: {
+                rejectUnauthorized: false,
+              },
+            },
+          };
+        }
+
         return {
           type: 'postgres',
           host: configService.getOrThrow<string>('DB_HOST'),
@@ -26,6 +43,7 @@ import { TasksModule } from './modules/tasks/tasks.module';
           database: configService.getOrThrow<string>('DB_DATABASE'),
           autoLoadEntities: true,
           synchronize: true,
+          ssl: false,
         };
       },
     }),
