@@ -10,7 +10,7 @@ import { TasksModule } from './modules/tasks/tasks.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `environments/.env.${process.env.NODE_ENV}`,
+      envFilePath: '.env',
       validationSchema: configValidationSchema,
     }),
     TasksModule,
@@ -19,31 +19,17 @@ import { TasksModule } from './modules/tasks/tasks.module';
       useFactory: (configService: ConfigService) => {
         const dbUrl = configService.get<string>('DATABASE_URL');
 
-        if (dbUrl) {
-          return {
-            type: 'postgres',
-            url: dbUrl,
-            autoLoadEntities: true,
-            synchronize: true,
-            ssl: true,
-            extra: {
-              ssl: {
-                rejectUnauthorized: false,
-              },
-            },
-          };
-        }
-
         return {
           type: 'postgres',
-          host: configService.getOrThrow<string>('DB_HOST'),
-          port: configService.getOrThrow<number>('DB_PORT'),
-          username: configService.getOrThrow<string>('DB_USERNAME'),
-          password: configService.getOrThrow<string>('DB_PASSWORD'),
-          database: configService.getOrThrow<string>('DB_DATABASE'),
+          url: dbUrl,
           autoLoadEntities: true,
           synchronize: true,
-          ssl: false,
+          ssl: true,
+          extra: {
+            ssl: {
+              rejectUnauthorized: false,
+            },
+          },
         };
       },
     }),
